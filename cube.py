@@ -8,9 +8,9 @@
 # 7: DRB
 
 corner_permutation = [i for i in range(8)]
-corner_orentiation = [0, 1, 2]
+corner_orentiation = [0 for i in range(8)]
 edge_permutation = [i for i in range(12)]
-edge_orientation = [0, 1]
+edge_orientation = [0 for i in range(12)]
 
 
 class Cube:
