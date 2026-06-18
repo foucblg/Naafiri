@@ -51,25 +51,29 @@ class Cube:
 
 
     def U(self):
-        self.corner_permutation[0] = self.corner_permutation[3]
-        self.edge_permutation[0] = self.edge_permutation[3]
-        for i in range(1, 4):
-            self.corner_permutation[i] = self.corner_permutation[i-1]
-            self.edge_permutation[i] = self.edge_permutation[i-1]
+        tmp_corners = self.corner_permutation[:]
+        tmp_edges = self.edge_permutation[:]
+        self.corner_permutation[0] = tmp_corners[3]
+        self.corner_permutation[3] = tmp_corners[2]
+        self.corner_permutation[2] = tmp_corners[1]
+        self.corner_permutation[1] = tmp_corners[0]
+        self.edge_permutation[0] = tmp_edges[3]
+        self.edge_permutation[3] = tmp_edges[2]
+        self.edge_permutation[2] = tmp_edges[1]
+        self.edge_permutation[1] = tmp_edges[0]
         
     def U_prime(self):
-        for i in range(0, 3):
-            self.corner_permutation[i] = self.corner_permutation[i+1]
-            self.edge_permutation[i] = self.edge_permutation[i+1]
-        self.corner_permutation[3] = self.corner_permutation[0]
-        self.edge_permutation[3] = self.edge_permutation[0]
+        tmp_corners = self.corner_permutation[:]
+        tmp_edges = self.edge_permutation[:]
+        self.corner_permutation[3] = tmp_corners[0]
+        self.corner_permutation[2] = tmp_corners[3]
+        self.corner_permutation[1] = tmp_corners[2]
+        self.corner_permutation[0] = tmp_corners[1]
+        self.edge_permutation[3] = tmp_edges[0]
+        self.edge_permutation[2] = tmp_edges[3]
+        self.edge_permutation[1] = tmp_edges[2]
+        self.edge_permutation[0] = tmp_edges[1]
 
 
 
 cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
-
-
-cube_with_one_move = cube_resolved.copy()
-cube_with_one_move.U()
-print(cube_resolved)
-print(cube_with_one_move)
