@@ -73,6 +73,29 @@ class Cube:
         self.edge_permutation[2] = tmp_edges[3]
         self.edge_permutation[1] = tmp_edges[2]
         self.edge_permutation[0] = tmp_edges[1]
+    
+    def D(self):
+        tmp_corners = self.corner_permutation[:]
+        tmp_edges = self.edge_permutation[:]
+        self.corner_permutation[7] = tmp_corners[4]
+        self.corner_permutation[6] = tmp_corners[7]
+        self.corner_permutation[5] = tmp_corners[6]
+        self.corner_permutation[4] = tmp_corners[5]
+        self.edge_permutation[7] = tmp_edges[4]
+        self.edge_permutation[6] = tmp_edges[7]
+        self.edge_permutation[5] = tmp_edges[6]
+        self.edge_permutation[4] = tmp_edges[5]
+    def D_prime(self):
+        tmp_corners = self.corner_permutation[:]
+        tmp_edges = self.edge_permutation[:]
+        self.corner_permutation[4] = tmp_corners[7]
+        self.corner_permutation[7] = tmp_corners[6]
+        self.corner_permutation[6] = tmp_corners[5]
+        self.corner_permutation[5] = tmp_corners[4]
+        self.edge_permutation[4] = tmp_edges[7]
+        self.edge_permutation[7] = tmp_edges[6]
+        self.edge_permutation[6] = tmp_edges[5]
+        self.edge_permutation[5] = tmp_edges[4]
 
 
 
