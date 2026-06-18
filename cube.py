@@ -36,8 +36,8 @@ class Cube:
         for i in range(1, 4):
             self.corner_permutation[i] = self.corner_permutation[i-1]
             self.edge_permutation[i] = self.edge_permutation[i-1]
-        self.corner_permutation[0] = self.corner_permutation[4]
-        self.edge_permutation[0] = self.edge_permutation[4]
+        self.corner_permutation[0] = self.corner_permutation[3]
+        self.edge_permutation[0] = self.edge_permutation[3]
 
 
 
