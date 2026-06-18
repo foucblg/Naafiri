@@ -1,3 +1,5 @@
+import random
+
 # 0: URF
 # 1: UFL
 # 2: ULB
@@ -173,6 +175,21 @@ class Cube:
 
         self.corner_permutation = cp
         self.edge_permutation = ep
+
+    def shuffle(self, n=20):
+        moves = list(Cube.MOVES.keys())
+
+        last_move = None
+
+        for _ in range(n):
+            m = random.choice(moves)
+
+            # évite les répétitions inutiles (ex: U puis U')
+            while last_move and m[0] == last_move[0]:
+                m = random.choice(moves)
+
+            self.move(m)
+            last_move = m
 
 
 cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
