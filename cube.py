@@ -21,9 +21,9 @@
 # 11: BR
 
 corner_permutation = [i for i in range(8)]
-corner_orentation = [0 for i in range(8)]
+corner_orentation = [0 for _ in range(8)]
 edge_permutation = [i for i in range(12)]
-edge_orientation = [0 for i in range(12)]
+edge_orientation = [0 for _ in range(12)]
 
 
 class Cube:
@@ -39,6 +39,14 @@ class Cube:
             f"Corner orientation : {self.corner_orentation}\n"
             f"Edge permutation : {self.edge_permutation}\n"
             f"Edge orientation : {self.edge_orientation}\n"
+        )
+
+    def copy(self):
+        return Cube(
+            self.corner_permutation[:],
+            self.corner_orentation[:],
+            self.edge_permutation[:],
+            self.edge_orientation[:]
         )
 
 
@@ -59,8 +67,9 @@ class Cube:
 
 
 cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
-print(cube_resolved)
 
-cube_with_one_move = cube_resolved
+
+cube_with_one_move = cube_resolved.copy()
 cube_with_one_move.U()
+print(cube_resolved)
 print(cube_with_one_move)
