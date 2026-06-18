@@ -21,17 +21,27 @@
 # 11: BR
 
 corner_permutation = [i for i in range(8)]
-corner_orentiation = [0 for i in range(8)]
+corner_orentation = [0 for i in range(8)]
 edge_permutation = [i for i in range(12)]
 edge_orientation = [0 for i in range(12)]
 
 
 class Cube:
-    def __init__(self, corner_permutation, corner_orentiation,edge_permutation, edge_orientation):
+    def __init__(self, corner_permutation, corner_orentation,edge_permutation, edge_orientation):
         self.corner_permutation = corner_permutation
-        self.corner_orentiation = corner_orentiation
+        self.corner_orentation = corner_orentation
         self.edge_permutation = edge_permutation
         self.edge_orientation = edge_orientation
+
+    def __str__(self):
+                return (
+            f"Corner permutation : {self.corner_permutation}\n"
+            f"Corner orientation : {self.corner_orentation}\n"
+            f"Edge permutation : {self.edge_permutation}\n"
+            f"Edge orientation : {self.edge_orientation}\n"
+        )
+
+
     def U(self):
         self.corner_permutation[0] = self.corner_permutation[3]
         self.edge_permutation[0] = self.edge_permutation[3]
@@ -48,7 +58,9 @@ class Cube:
 
 
 
-cube_resolved = Cube(corner_permutation, corner_orentiation, edge_permutation, edge_orientation)
+cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
+print(cube_resolved)
 
 cube_with_one_move = cube_resolved
 cube_with_one_move.U()
+print(cube_with_one_move)
