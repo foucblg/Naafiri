@@ -45,8 +45,10 @@ class Cube:
             self.edge_permutation[i] = self.edge_permutation[i+1]
         self.corner_permutation[3] = self.corner_permutation[0]
         self.edge_permutation[3] = self.edge_permutation[0]
-    
 
 
 
 cube_resolved = Cube(corner_permutation, corner_orentiation, edge_permutation, edge_orientation)
+
+cube_with_one_move = cube_resolved
+cube_with_one_move.U()
