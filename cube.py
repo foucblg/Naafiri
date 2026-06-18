@@ -33,11 +33,19 @@ class Cube:
         self.edge_permutation = edge_permutation
         self.edge_orientation = edge_orientation
     def U(self):
+        self.corner_permutation[0] = self.corner_permutation[3]
+        self.edge_permutation[0] = self.edge_permutation[3]
         for i in range(1, 4):
             self.corner_permutation[i] = self.corner_permutation[i-1]
             self.edge_permutation[i] = self.edge_permutation[i-1]
-        self.corner_permutation[0] = self.corner_permutation[3]
-        self.edge_permutation[0] = self.edge_permutation[3]
+        
+    def U_prime(self):
+        for i in range(0, 3):
+            self.corner_permutation[i] = self.corner_permutation[i+1]
+            self.edge_permutation[i] = self.edge_permutation[i+1]
+        self.corner_permutation[3] = self.corner_permutation[0]
+        self.edge_permutation[3] = self.edge_permutation[0]
+    
 
 
 
