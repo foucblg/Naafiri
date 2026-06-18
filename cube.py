@@ -27,76 +27,152 @@ edge_orientation = [0 for _ in range(12)]
 
 
 class Cube:
-    def __init__(self, corner_permutation, corner_orentation,edge_permutation, edge_orientation):
-        self.corner_permutation = corner_permutation
-        self.corner_orentation = corner_orentation
-        self.edge_permutation = edge_permutation
-        self.edge_orientation = edge_orientation
+    def __init__(self, cp, co, ep, eo):
+        self.corner_permutation = cp
+        self.corner_orientation = co
+        self.edge_permutation = ep
+        self.edge_orientation = eo
 
+    # -------------------------
+    # DEBUG
+    # -------------------------
     def __str__(self):
-                return (
-            f"Corner permutation : {self.corner_permutation}\n"
-            f"Corner orientation : {self.corner_orentation}\n"
-            f"Edge permutation : {self.edge_permutation}\n"
-            f"Edge orientation : {self.edge_orientation}\n"
+        return (
+            f"Corners perm: {self.corner_permutation}\n"
+            f"Corners orient: {self.corner_orientation}\n"
+            f"Edges perm: {self.edge_permutation}\n"
+            f"Edges orient: {self.edge_orientation}\n"
         )
 
     def copy(self):
         return Cube(
             self.corner_permutation[:],
-            self.corner_orentation[:],
+            self.corner_orientation[:],
             self.edge_permutation[:],
             self.edge_orientation[:]
         )
 
+    # -------------------------
+    # CORE UTILS
+    # -------------------------
+    def _cycle(self, arr, idx):
+        tmp = arr[:]
+        n = len(idx)
+        for i in range(n):
+            arr[idx[i]] = tmp[idx[(i - 1) % n]]
 
-    def U(self):
-        tmp_corners = self.corner_permutation[:]
-        tmp_edges = self.edge_permutation[:]
-        self.corner_permutation[0] = tmp_corners[3]
-        self.corner_permutation[3] = tmp_corners[2]
-        self.corner_permutation[2] = tmp_corners[1]
-        self.corner_permutation[1] = tmp_corners[0]
-        self.edge_permutation[0] = tmp_edges[3]
-        self.edge_permutation[3] = tmp_edges[2]
-        self.edge_permutation[2] = tmp_edges[1]
-        self.edge_permutation[1] = tmp_edges[0]
-        
-    def U_prime(self):
-        tmp_corners = self.corner_permutation[:]
-        tmp_edges = self.edge_permutation[:]
-        self.corner_permutation[3] = tmp_corners[0]
-        self.corner_permutation[2] = tmp_corners[3]
-        self.corner_permutation[1] = tmp_corners[2]
-        self.corner_permutation[0] = tmp_corners[1]
-        self.edge_permutation[3] = tmp_edges[0]
-        self.edge_permutation[2] = tmp_edges[3]
-        self.edge_permutation[1] = tmp_edges[2]
-        self.edge_permutation[0] = tmp_edges[1]
-    
-    def D(self):
-        tmp_corners = self.corner_permutation[:]
-        tmp_edges = self.edge_permutation[:]
-        self.corner_permutation[7] = tmp_corners[4]
-        self.corner_permutation[6] = tmp_corners[7]
-        self.corner_permutation[5] = tmp_corners[6]
-        self.corner_permutation[4] = tmp_corners[5]
-        self.edge_permutation[7] = tmp_edges[4]
-        self.edge_permutation[6] = tmp_edges[7]
-        self.edge_permutation[5] = tmp_edges[6]
-        self.edge_permutation[4] = tmp_edges[5]
-    def D_prime(self):
-        tmp_corners = self.corner_permutation[:]
-        tmp_edges = self.edge_permutation[:]
-        self.corner_permutation[4] = tmp_corners[7]
-        self.corner_permutation[7] = tmp_corners[6]
-        self.corner_permutation[6] = tmp_corners[5]
-        self.corner_permutation[5] = tmp_corners[4]
-        self.edge_permutation[4] = tmp_edges[7]
-        self.edge_permutation[7] = tmp_edges[6]
-        self.edge_permutation[6] = tmp_edges[5]
-        self.edge_permutation[5] = tmp_edges[4]
+    # -------------------------
+    # MOVE TABLE
+    # -------------------------
+    MOVES = {
+        "U": {
+            "cp": [[0, 3, 2, 1]],
+            "ep": [[0, 3, 2, 1]],
+            "co": [],
+            "eo": []
+        },
+        "U'": {
+            "cp": [[1, 2, 3, 0]],
+            "ep": [[1, 2, 3, 0]],
+            "co": [],
+            "eo": []
+        },
 
+        "D": {
+            "cp": [[4, 5, 6, 7]],
+            "ep": [[4, 5, 6, 7]],
+            "co": [],
+            "eo": []
+        },
+        "D'": {
+            "cp": [[7, 6, 5, 4]],
+            "ep": [[7, 6, 5, 4]],
+            "co": [],
+            "eo": []
+        },
+
+        "F": {
+            "cp": [[0, 1, 5, 4]],
+            "ep": [[1, 8, 5, 9]],
+            "co": [0, 1, 4, 5],
+            "eo": [1, 8, 5, 9]
+        },
+        "F'": {
+            "cp": [[0, 4, 5, 1]],
+            "ep": [[1, 9, 5, 8]],
+            "co": [0, 1, 4, 5],
+            "eo": [1, 8, 5, 9]
+        },
+
+        "B": {
+            "cp": [[2, 3, 7, 6]],
+            "ep": [[3, 10, 7, 11]],
+            "co": [2, 3, 6, 7],
+            "eo": [3, 10, 7, 11]
+        },
+        "B'": {
+            "cp": [[2, 6, 7, 3]],
+            "ep": [[3, 11, 7, 10]],
+            "co": [2, 3, 6, 7],
+            "eo": [3, 10, 7, 11]
+        },
+
+        "R": {
+            "cp": [[0, 4, 7, 3]],
+            "ep": [[0, 8, 4, 11]],
+            "co": [0, 3, 4, 7],
+            "eo": [0, 8, 4, 11]
+        },
+        "R'": {
+            "cp": [[0, 3, 7, 4]],
+            "ep": [[0, 11, 4, 8]],
+            "co": [0, 3, 4, 7],
+            "eo": [0, 8, 4, 11]
+        },
+
+        "L": {
+            "cp": [[1, 2, 6, 5]],
+            "ep": [[2, 9, 6, 10]],
+            "co": [1, 2, 5, 6],
+            "eo": [2, 9, 6, 10]
+        },
+        "L'": {
+            "cp": [[1, 5, 6, 2]],
+            "ep": [[2, 10, 6, 9]],
+            "co": [1, 2, 5, 6],
+            "eo": [2, 9, 6, 10]
+        }
+    }
+
+    # -------------------------
+    # APPLY MOVE
+    # -------------------------
+    def move(self, m):
+        m = Cube.MOVES[m]
+
+        cp = self.corner_permutation[:]
+        co = self.corner_orientation[:]
+        ep = self.edge_permutation[:]
+        eo = self.edge_orientation[:]
+
+        # corners permutation
+        for cycle in m["cp"]:
+            self._cycle(cp, cycle)
+
+        # edges permutation
+        for cycle in m["ep"]:
+            self._cycle(ep, cycle)
+
+        # corner orientation
+        for i in m["co"]:
+            self.corner_orientation[i] = (co[i] + 1) % 3
+
+        # edge orientation
+        for i in m["eo"]:
+            self.edge_orientation[i] = eo[i] ^ 1
+
+        self.corner_permutation = cp
+        self.edge_permutation = ep
 
 
 cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)

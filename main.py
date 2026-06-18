@@ -1,5 +1,5 @@
 from cube import cube_resolved
 
 cube = cube_resolved.copy()
-cube.U()
+cube.move("U")
 print(cube)
