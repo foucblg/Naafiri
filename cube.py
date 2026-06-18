@@ -45,6 +45,12 @@ class Cube:
             f"Edges perm: {self.edge_permutation}\n"
             f"Edges orient: {self.edge_orientation}\n"
         )
+    def to_vector(self):
+        L = [i for i in self.corner_permutation]
+        L+= [i for i in self.corner_orientation]
+        L+= [i for i in self.edge_permutation]
+        L+= [i for i in self.edge_orientation]
+        return L
 
     def copy(self):
         return Cube(
