@@ -1,13 +1,14 @@
 import random
+import matplotlib.pyplot as plt
 
-# 0: URF
+# 0: UFR
 # 1: UFL
-# 2: ULB
+# 2: UBL
 # 3: UBR
 # 4: DFR
-# 5: DLF
+# 5: DFL
 # 6: DBL
-# 7: DRB
+# 7: DBR
 
 # 0: UR
 # 1: UF
@@ -59,6 +60,85 @@ class Cube:
             self.edge_permutation[:],
             self.edge_orientation[:]
         )
+
+    def show(self):
+        tab = [[-1 for _ in range(12)] for _ in range(9)]
+        tab[1][4] = 0
+        tab[4][1] = 1
+        tab[4][4] = 2
+        tab[4][7] = 3
+        tab[4][10] = 4
+        tab[7][4] = 5
+        
+        pos_corners = [
+            [(3,5),(2,5),(3,6)],
+            [(3,3),(3,2),(2,3)],
+            [(0,3),(3,0),(3,11)],
+            [(0,5),(3,8),(3,9)],
+            [(5,5),(5,6),(6,5)],
+            [(5,3),(6,3),(5,2)],
+            [(5,0),(5,11),(8,3)],
+            [(8,5),(5,8),(5,9)],
+                       ]
+        col_corners = [
+            [2,0,3],
+            [2,1,0],
+            [0,1,4],
+            [0,3,4],
+            [2,3,5],
+            [2,5,1],
+            [1,4,5],
+            [5,3,4],
+                       ]
+        pos_edges = [
+            [(1,5),(3,7)],
+            [(2,4),(3,4)],
+            [(1,3),(3,1)],
+            [(0,4),(3,10)],
+            [(7,5),(5,7)],
+            [(5,4),(6,4)],
+            [(5,1),(7,3)],
+            [(8,4),(5,10)],
+            [(4,5),(4,6)],
+            [(4,2),(4,3)],
+            [(4,0),(4,11)],
+            [(4,8),(4,9)],
+                     ]
+        col_edges = [
+            [0,3],
+            [0,2],
+            [0,1],
+            [0,4],
+            [5,3],
+            [2,5],
+            [1,5],
+            [5,4],
+            [2,3],
+            [1,2],
+            [1,4],
+            [3,4],
+                     ]
+
+        for i in range(8):
+            pos = pos_corners[i]
+            col = col_corners[self.corner_permutation[i]]
+            for p_i, p in enumerate(pos):
+                tab[p[0]][p[1]] = col[(p_i + self.corner_orientation[i])%3]
+            
+        for i in range(12):
+            pos = pos_edges[i]
+            col = col_edges[self.edge_permutation[i]]
+            for p_i, p in enumerate(pos):
+                tab[p[0]][p[1]] = col[(p_i + self.edge_orientation[i])%2]
+
+        couleurs = [(255,165,0),(0,255,0),(255,255,255),(0,0,255),(255,255,0),(255,0,0)]
+        tab2 = [[False for i in range(12)] for e in range(9)]
+        for i in range(9):
+            for j in range(12):
+                tab2[i][j] = (0,0,0) if tab[i][j] == -1 else couleurs[tab[i][j]]
+
+        plt.imshow(tab2)
+        plt.show()
 
     # -------------------------
     # CORE UTILS
@@ -199,3 +279,6 @@ class Cube:
 
 
 cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
+#cube_resolved.move("F")
+#cube_resolved.edge_orientation[0] = 1
+#cube_resolved.show()
