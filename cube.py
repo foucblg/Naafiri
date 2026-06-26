@@ -23,42 +23,42 @@ import matplotlib.pyplot as plt
 # 10: BL
 # 11: BR
 
-corner_permutation = [i for i in range(8)]
+cp = [i for i in range(8)]
 corner_orentation = [0 for _ in range(8)]
-edge_permutation = [i for i in range(12)]
-edge_orientation = [0 for _ in range(12)]
+ep = [i for i in range(12)]
+eo = [0 for _ in range(12)]
 
 
 class Cube:
     def __init__(self, cp, co, ep, eo):
-        self.corner_permutation = cp
-        self.corner_orientation = co
-        self.edge_permutation = ep
-        self.edge_orientation = eo
+        self.cp = cp
+        self.co = co
+        self.ep = ep
+        self.eo = eo
 
     # -------------------------
     # DEBUG
     # -------------------------
     def __str__(self):
         return (
-            f"Corners perm: {self.corner_permutation}\n"
-            f"Corners orient: {self.corner_orientation}\n"
-            f"Edges perm: {self.edge_permutation}\n"
-            f"Edges orient: {self.edge_orientation}\n"
+            f"Corners perm: {self.cp}\n"
+            f"Corners orient: {self.co}\n"
+            f"Edges perm: {self.ep}\n"
+            f"Edges orient: {self.eo}\n"
         )
     def to_vector(self):
-        L = [i for i in self.corner_permutation]
-        L+= [i for i in self.corner_orientation]
-        L+= [i for i in self.edge_permutation]
-        L+= [i for i in self.edge_orientation]
+        L = [i for i in self.cp]
+        L+= [i for i in self.co]
+        L+= [i for i in self.ep]
+        L+= [i for i in self.eo]
         return L
 
     def copy(self):
         return Cube(
-            self.corner_permutation[:],
-            self.corner_orientation[:],
-            self.edge_permutation[:],
-            self.edge_orientation[:]
+            self.cp[:],
+            self.co[:],
+            self.ep[:],
+            self.eo[:]
         )
 
     def show(self):
@@ -121,15 +121,15 @@ class Cube:
 
         for i in range(8):
             pos = pos_corners[i]
-            col = col_corners[self.corner_permutation[i]]
+            col = col_corners[self.cp[i]]
             for p_i, p in enumerate(pos):
-                tab[p[0]][p[1]] = col[(p_i + self.corner_orientation[i])%3]
+                tab[p[0]][p[1]] = col[(p_i + self.co[i])%3]
             
         for i in range(12):
             pos = pos_edges[i]
-            col = col_edges[self.edge_permutation[i]]
+            col = col_edges[self.ep[i]]
             for p_i, p in enumerate(pos):
-                tab[p[0]][p[1]] = col[(p_i + self.edge_orientation[i])%2]
+                tab[p[0]][p[1]] = col[(p_i + self.eo[i])%2]
 
         couleurs = [(255,165,0),(0,255,0),(255,255,255),(0,0,255),(255,255,0),(255,0,0)]
         tab2 = [[False for i in range(12)] for e in range(9)]
@@ -153,114 +153,76 @@ class Cube:
     # MOVE TABLE
     # -------------------------
     MOVES = {
+        # --- FACE HAUT (UP) ---
         "U": {
-            "cp": [[0, 3, 2, 1]],
-            "ep": [[0, 3, 2, 1]],
-            "co": [],
-            "eo": []
+            "cp": [3, 0, 1, 2, 4, 5, 6, 7],
+            "co": [0, 0, 0, 0, 0, 0, 0, 0],
+            "ep": [3, 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11],
+            "eo": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
-        "U'": {
-            "cp": [[1, 2, 3, 0]],
-            "ep": [[1, 2, 3, 0]],
-            "co": [],
-            "eo": []
-        },
-
+        
+        # --- FACE BAS (DOWN) ---
         "D": {
-            "cp": [[4, 5, 6, 7]],
-            "ep": [[4, 5, 6, 7]],
-            "co": [],
-            "eo": []
-        },
-        "D'": {
-            "cp": [[7, 6, 5, 4]],
-            "ep": [[7, 6, 5, 4]],
-            "co": [],
-            "eo": []
+            "cp": [0, 1, 2, 3, 5, 6, 7, 4],
+            "co": [0, 0, 0, 0, 0, 0, 0, 0],
+            "ep": [0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11],
+            "eo": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
 
+        # --- FACE AVANT (FRONT) ---
         "F": {
-            "cp": [[0, 1, 5, 4]],
-            "ep": [[1, 8, 5, 9]],
-            "co": [0, 1, 4, 5],
-            "eo": [1, 8, 5, 9]
-        },
-        "F'": {
-            "cp": [[0, 4, 5, 1]],
-            "ep": [[1, 9, 5, 8]],
-            "co": [0, 1, 4, 5],
-            "eo": [1, 8, 5, 9]
+            "cp": [1, 5, 2, 3, 0, 4, 6, 7],
+            "co": [1, 2, 0, 0, 2, 1, 0, 0],
+            "ep": [0, 9, 2, 3, 4, 8, 6, 7, 1, 5, 10, 11],
+            "eo": [0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0] # F retourne 4 arêtes
         },
 
+        # --- FACE ARRIÈRE (BACK) ---
         "B": {
-            "cp": [[2, 3, 7, 6]],
-            "ep": [[3, 10, 7, 11]],
-            "co": [2, 3, 6, 7],
-            "eo": [3, 10, 7, 11]
-        },
-        "B'": {
-            "cp": [[2, 6, 7, 3]],
-            "ep": [[3, 11, 7, 10]],
-            "co": [2, 3, 6, 7],
-            "eo": [3, 10, 7, 11]
+            "cp": [0, 1, 3, 7, 4, 5, 2, 6],
+            "co": [0, 0, 1, 2, 0, 0, 2, 1],
+            "ep": [0, 1, 2, 11, 4, 5, 6, 10, 8, 9, 3, 7],
+            "eo": [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1] # B retourne 4 arêtes
         },
 
+        # --- FACE DROITE (RIGHT) ---
         "R": {
-            "cp": [[0, 4, 7, 3]],
-            "ep": [[0, 8, 4, 11]],
-            "co": [0, 3, 4, 7],
-            "eo": [0, 8, 4, 11]
-        },
-        "R'": {
-            "cp": [[0, 3, 7, 4]],
-            "ep": [[0, 11, 4, 8]],
-            "co": [0, 3, 4, 7],
-            "eo": [0, 8, 4, 11]
+            "cp": [4, 1, 2, 0, 7, 5, 6, 3],
+            "co": [2, 0, 0, 1, 1, 0, 0, 2],
+            "ep": [8, 1, 2, 3, 11, 5, 6, 7, 4, 9, 10, 0],
+            "eo": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
 
+        # --- FACE GAUCHE (LEFT) ---
         "L": {
-            "cp": [[1, 2, 6, 5]],
-            "ep": [[2, 9, 6, 10]],
-            "co": [1, 2, 5, 6],
-            "eo": [2, 9, 6, 10]
-        },
-        "L'": {
-            "cp": [[1, 5, 6, 2]],
-            "ep": [[2, 10, 6, 9]],
-            "co": [1, 2, 5, 6],
-            "eo": [2, 9, 6, 10]
+            "cp": [0, 2, 6, 3, 4, 1, 5, 7],
+            "co": [0, 1, 2, 0, 0, 2, 1, 0],
+            "ep": [0, 1, 10, 3, 4, 5, 9, 7, 8, 2, 6, 11],
+            "eo": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
     }
 
     # -------------------------
     # APPLY MOVE
     # -------------------------
-    def move(self, m):
-        m = Cube.MOVES[m]
+    def move(self, m_name):
+        m = Cube.MOVES[m_name]
+        
+        # 1. On calcule les nouveaux tableaux
+        # On va chercher l'ancienne pièce (cp) et son ancienne orientation (co)
+        # à l'index d'origine (m["cp"][i]), puis on y ajoute la torsion du mouvement.
+        
+        new_cp = [self.cp[m["cp"][i]] for i in range(8)]
+        new_co = [(self.co[m["cp"][i]] + m["co"][i]) % 3 for i in range(8)]
+        
+        new_ep = [self.ep[m["ep"][i]] for i in range(12)]
+        new_eo = [(self.eo[m["ep"][i]] + m["eo"][i]) % 2 for i in range(12)]
 
-        cp = self.corner_permutation[:]
-        co = self.corner_orientation[:]
-        ep = self.edge_permutation[:]
-        eo = self.edge_orientation[:]
-
-        # corners permutation
-        for cycle in m["cp"]:
-            self._cycle(cp, cycle)
-
-        # edges permutation
-        for cycle in m["ep"]:
-            self._cycle(ep, cycle)
-
-        # corner orientation
-        for i in m["co"]:
-            self.corner_orientation[i] = (co[i] + 1) % 3
-
-        # edge orientation
-        for i in m["eo"]:
-            self.edge_orientation[i] = eo[i] ^ 1
-
-        self.corner_permutation = cp
-        self.edge_permutation = ep
+        # 2. On met à jour l'état du cube
+        self.cp = new_cp
+        self.co = new_co
+        self.ep = new_ep
+        self.eo = new_eo
 
     def shuffle(self, n=20):
         moves = list(Cube.MOVES.keys())
@@ -278,7 +240,10 @@ class Cube:
             last_move = m
 
 
-cube_resolved = Cube(corner_permutation, corner_orentation, edge_permutation, edge_orientation)
-#cube_resolved.move("F")
-#cube_resolved.edge_orientation[0] = 1
-#cube_resolved.show()
+cube_resolved = Cube(cp, corner_orentation, ep, eo)
+# cube_resolved.move("R")
+# cube_resolved.move("F")
+# # cube_resolved.cp[0] = 1
+# # cube_resolved.cp[1] = 0
+# print(cube_resolved)
+# cube_resolved.show()
