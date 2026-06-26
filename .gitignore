@@ -2,3 +2,4 @@ venv
 data.txt
 test.txt
 model.pth
+confusion_matrix.png
