@@ -39,7 +39,7 @@ train_data = Data(X_train, y_train)
 train_dataloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
 
 
-input_dim = 40
+input_dim = 244
 hidden_dim = 256
 output_dim = 30
        

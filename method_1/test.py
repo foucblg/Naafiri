@@ -23,7 +23,7 @@ X_test = np.array(X_test, dtype=np.float32)
 y_test = np.array(y_test, dtype=np.int64)
 
 
-model = NeuralNetwork(40, 256, 30)
+model = NeuralNetwork(244, 256, 30)
 model.load_state_dict(torch.load("model.pth"))
 model.eval()
 

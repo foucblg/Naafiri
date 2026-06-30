@@ -1,5 +1,5 @@
 venv
-data.txt
-test.txt
-model.pth
-confusion_matrix.png
+method_1/data.txt
+method_1/test.txt
+method_1/model.pth
+method_1/confusion_matrix.png

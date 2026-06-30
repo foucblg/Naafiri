@@ -47,11 +47,22 @@ class Cube:
             f"Edges orient: {self.eo}\n"
         )
     def to_vector(self):
-        L = [i for i in self.cp]
-        L+= [i for i in self.co]
-        L+= [i for i in self.ep]
-        L+= [i for i in self.eo]
-        return L
+        L = [[[0 for _ in range(8)] for _ in range(8)], [[0 for _ in range(3)] for _ in range(8)], [[0 for _ in range(12)] for _ in range(12)], [self.eo]]
+        for i in range(8):
+            for j in range(8):
+                if self.cp[i] == j :
+                    L[0][i][j] = 1
+        for i in range(8):
+            for j in range(8):
+                if self.co[i] == 1 :
+                    L[1][i][1] = 1
+                if self.co[i] == 2 :
+                    L[1][i][2] = 1
+        for i in range(12):
+            for j in range(12):
+                if self.ep[i] == j :
+                    L[2][i][j] = 1
+        return sum(sum(L, []), [])
 
     def copy(self):
         return Cube(
