@@ -1,24 +1,19 @@
 from cube import cube_resolved
+from torch import save
 
 def random_generation():
+    for i in range (3):
+        for _ in range(int(100)):
+            cube = cube_resolved.copy()
+            cube.shuffle(i)
+            save(cube.to_one_list(), "method_2/data.pt")
 
-    fichier = open("method_2/data.txt", "w")
+def generate_test():
     for i in range (3):
         for _ in range(int(10)):
             cube = cube_resolved.copy()
             cube.shuffle(i)
-            fichier.write(f"{cube.to_one_list()}\n")
-    return fichier
-
-def generate_test():
-    fichier = open("method_2/test.txt", "w")
-    for i in range (30):
-        for _ in range(int(10)):
-
-            cube = cube_resolved.copy()
-            cube.shuffle(i)
-            fichier.write(f"[{str(cube.to_vector())},{i}]\n")
-    return fichier
+            save(cube.to_one_list(), "method_2/test.pt")
 
 random_generation()
 # generate_test()
