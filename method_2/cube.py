@@ -63,7 +63,19 @@ class Cube:
                 if self.ep[i] == j :
                     L[2][i][j] = 1
         return sum(sum(L, []), [])
-
+    
+    def to_one_list(self):
+        L=[]
+        for i in self.cp:
+            L.append(i)
+        for i in self.co:
+            L.append(i)
+        for i in self.ep:
+            L.append(i)
+        for i in self.eo:
+            L.append(i)
+        return L
+    
     def copy(self):
         return Cube(
             self.cp[:],
