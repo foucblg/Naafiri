@@ -294,6 +294,12 @@ class Cube:
         self.co = new_co
         self.ep = new_ep
         self.eo = new_eo
+    
+    def antimove(self, anti_m_name):
+        if anti_m_name[-1] == 'p':
+            self.move(anti_m_name[0])
+        else:
+            self.move(anti_m_name + 'p')
 
     def shuffle(self, n=20):
         moves = list(Cube.MOVES.keys())

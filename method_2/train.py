@@ -39,32 +39,34 @@ loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 num_epochs = 1 # 100
-# loss_values = []
+loss_values = []
 moves = list(Cube.MOVES.keys())
 
 for epoch in range(num_epochs):
     for X in train_dataloader:
         optimizer.zero_grad()
-        cube = Cube(X[0:8],X[8:16],X[16:28],X[28:40])
+        cube = Cube(X[0:8], X[8:16], X[16:28], X[28:40])
         X_vec = cube.to_vector()
         pred = model(X_vec)
 
+        pred_min = output_dim + 1
+
         for m in moves:
             cube.move(m)
-            
+            X_vec_moved = cube.to_vector()
+            pred_list_moved = model(X_vec_moved)
+            pred_int_moved = np.argmax(pred_list_moved)
+            pred_min = min(pred_int_moved, pred_min)
+            cube.antimove(m)
 
+        y = [int(i == pred_min + 1) for i in range(output_dim)]
 
+        loss = loss_fn(pred, y)
+        loss_values.append(loss.item())
+        loss.backward()
+        optimizer.step()
 
-
-
-
-
-        # loss = loss_fn(pred, y)
-        # loss_values.append(loss.item())
-        # loss.backward()
-        # optimizer.step()
-
-torch.save(model.state_dict(), "model.pth")
+torch.save(model.state_dict(), "method_2/model.pth")
 
 print("Training Complete")
 
