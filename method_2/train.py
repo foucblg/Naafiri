@@ -1,7 +1,7 @@
 import numpy as np
 import ast
 import torch
-from torch import nn, optim
+from torch import nn, optim, load
 from torch.utils.data import Dataset, DataLoader
 from method_2.cube import Cube
 from model import NeuralNetwork
@@ -20,19 +20,9 @@ class Data(Dataset):
    
 batch_size = 64
 
-x_train = []
+X_train = load("method_2/data.pt")
 
-with open("method_2/data.txt", encoding="utf-8") as file:
-    for line in file:
-        clean_line = line.strip()
-        if not clean_line:
-            continue
-        cube = ast.literal_eval(line)
-        x_train.append(cube)
-
-X_train = np.array(x_train, dtype=np.float32)
-
-train_data = Data(X_train)
+train_data = Dataset(X_train)
 train_dataloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
 
 
