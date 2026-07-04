@@ -2,7 +2,7 @@ from cube import cube_resolved
 
 def random_generation():
 
-    fichier = open("data.txt", "w")
+    fichier = open("method_1/data.txt", "w")
     
     for i in range (30):               #nombre de melange
         for _ in range(int(1000)):            #mélangé X fois
@@ -13,7 +13,7 @@ def random_generation():
     return fichier
 
 def generate_test():
-    fichier = open("test.txt", "w")
+    fichier = open("method_1/test.txt", "w")
     
     for i in range (30):               #nombre de melange
         for _ in range(int(10)):            #mélangé X fois
