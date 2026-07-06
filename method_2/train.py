@@ -34,7 +34,7 @@ loss_fn = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
-num_epochs = 100 # 100
+num_epochs = 100
 loss_values = []
 moves = list(Cube.MOVES.keys())
 
@@ -49,6 +49,9 @@ for epoch in range(num_epochs):
 
         for m in moves:
             cube.move(m)
+            if cube.is_resolved():
+                pred_min = 0
+                break
             X_vec_moved = cube.to_tensor().float()
             pred_list_moved = model(X_vec_moved).detach().numpy()
             pred_int_moved = np.argmax(pred_list_moved)
