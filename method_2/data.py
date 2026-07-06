@@ -3,8 +3,8 @@ from torch import save
 
 def random_generation():
     L = []
-    for i in range (3):
-        for _ in range(int(100)):
+    for i in range (30):
+        for _ in range(int(1000)):
             cube = cube_resolved.copy()
             cube.shuffle(i)
             L.append(cube.to_one_list())

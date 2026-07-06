@@ -1,7 +1,7 @@
 import numpy as np
 import ast
 import torch
-from torch import nn, optim, load
+from torch import nn, optim, load, tensor
 from torch.utils.data import Dataset, DataLoader
 from cube import Cube
 from model import NeuralNetwork
@@ -9,8 +9,8 @@ from model import NeuralNetwork
 
 class Data(Dataset):
     def __init__(self, X):
-        self.X = torch.from_numpy(X.astype(np.float32))
-        self.len = self.X.shape[0]
+        self.X = X
+        self.len = len(self.X)
        
     def __getitem__(self, index):
         return self.X[index]
@@ -18,15 +18,11 @@ class Data(Dataset):
     def __len__(self):
         return self.len
    
-batch_size = 64
+batch_size = 5
 
 X_train = load("method_2/data.pt")
 
-train_data = Data(X_train)
-train_dataloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
-
-
-input_dim = 246
+input_dim = 244
 hidden_dim = 256
 output_dim = 30
        
@@ -38,28 +34,28 @@ loss_fn = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
-num_epochs = 1 # 100
+num_epochs = 100 # 100
 loss_values = []
 moves = list(Cube.MOVES.keys())
 
 for epoch in range(num_epochs):
-    for X in train_dataloader:
+    for X in X_train:
         optimizer.zero_grad()
         cube = Cube(X[0:8], X[8:16], X[16:28], X[28:40])
-        X_vec = cube.to_vector()
+        X_vec = cube.to_tensor().float()
         pred = model(X_vec)
 
         pred_min = output_dim + 1
 
         for m in moves:
             cube.move(m)
-            X_vec_moved = cube.to_vector()
-            pred_list_moved = model(X_vec_moved)
+            X_vec_moved = cube.to_tensor().float()
+            pred_list_moved = model(X_vec_moved).detach().numpy()
             pred_int_moved = np.argmax(pred_list_moved)
             pred_min = min(pred_int_moved, pred_min)
             cube.antimove(m)
 
-        y = [int(i == pred_min + 1) for i in range(output_dim)]
+        y = tensor([int(i == pred_min + 1) for i in range(output_dim)]).float()
 
         loss = loss_fn(pred, y)
         loss_values.append(loss.item())

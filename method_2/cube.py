@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+from torch import tensor
 
 # 0: UFR
 # 1: UFL
@@ -48,14 +49,17 @@ class Cube:
         )
 
     def to_vector(self):
-        L = [[[0 for _ in range(8)] for _ in range(8)], [[0 for _ in range(3)] for _ in range(8)], [[0 for _ in range(12)] for _ in range(12)], [self.eo]]
+        L = [[[0 for _ in range(8)] for _ in range(8)], [[0 for _ in range(8)] for _ in range(3)], [[0 for _ in range(12)] for _ in range(12)], [self.eo]]
         for i in range(8):
             L[0][self.cp[i]][i] = 1
         for i in range(8):
-            L[0][self.co[i]][i] = 1
+            L[1][self.co[i]][i] = 1
         for i in range(12):
-            L[0][self.ep[i]][i] = 1
+            L[2][self.ep[i]][i] = 1
         return sum(sum(L, []), [])
+        
+    def to_tensor(self):
+        return tensor(self.to_vector())
     
     def to_one_list(self):
         L=[]
