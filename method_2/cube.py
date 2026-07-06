@@ -80,6 +80,9 @@ class Cube:
             self.ep[:],
             self.eo[:]
         )
+    
+    def is_resolved(self):
+        return self.to_one_list() == cube_resolved.to_one_list()
 
     def show(self):
         tab = [[-1 for _ in range(12)] for _ in range(9)]
