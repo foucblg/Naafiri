@@ -3,7 +3,7 @@ import ast
 import torch
 from torch import nn, optim, load
 from torch.utils.data import Dataset, DataLoader
-from method_2.cube import Cube
+from cube import Cube
 from model import NeuralNetwork
 
 
