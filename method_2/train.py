@@ -22,7 +22,7 @@ batch_size = 64
 
 X_train = load("method_2/data.pt")
 
-train_data = Dataset(X_train)
+train_data = Data(X_train)
 train_dataloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
 
 
@@ -69,7 +69,3 @@ for epoch in range(num_epochs):
 torch.save(model.state_dict(), "method_2/model.pth")
 
 print("Training Complete")
-
-"""
-Training Complete
-"""
