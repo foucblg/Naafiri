@@ -24,7 +24,7 @@ X_train = load("method_2/data.pt")
 
 input_dim = 244
 hidden_dim = 256
-output_dim = 30
+output_dim = 29
        
 model = NeuralNetwork(input_dim, hidden_dim, output_dim)
 
@@ -34,11 +34,12 @@ loss_fn = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
-num_epochs = 100
+num_epochs = 1
 loss_values = []
 moves = list(Cube.MOVES.keys())
 
 for epoch in range(num_epochs):
+    print(epoch)
     for X in X_train:
         optimizer.zero_grad()
         cube = Cube(X[0:8], X[8:16], X[16:28], X[28:40])
