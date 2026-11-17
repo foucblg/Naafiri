@@ -1,3 +1,4 @@
+import os
 import torch
 from torch import nn, load
 from cube import Cube, move_batch, is_resolved_batch, to_vector_batch
@@ -12,7 +13,8 @@ hidden_dim = 256
 output_dim = 29
 
 model = NeuralNetwork(input_dim, hidden_dim, output_dim).to(device)
-model.load_state_dict(load("method_2/model.pth"))
+if os.path.exists("method_2/model.pth"):
+    model.load_state_dict(load("method_2/model.pth"))
 
 learning_rate = 5e-4
 batch_size = 4096
