@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+import torch
 from torch import tensor
 
 # 0: UFR
@@ -49,29 +50,20 @@ class Cube:
         )
 
     def to_vector(self):
-        L = [[[0 for _ in range(8)] for _ in range(8)], [[0 for _ in range(8)] for _ in range(3)], [[0 for _ in range(12)] for _ in range(12)], [self.eo]]
+        v = [0] * 244
         for i in range(8):
-            L[0][self.cp[i]][i] = 1
-        for i in range(8):
-            L[1][self.co[i]][i] = 1
+            v[self.cp[i] * 8 + i] = 1
+            v[64 + self.co[i] * 8 + i] = 1
         for i in range(12):
-            L[2][self.ep[i]][i] = 1
-        return sum(sum(L, []), [])
+            v[88 + self.ep[i] * 12 + i] = 1
+        v[232:244] = self.eo
+        return v
         
     def to_tensor(self):
         return tensor(self.to_vector())
     
     def to_one_list(self):
-        L=[]
-        for i in self.cp:
-            L.append(i)
-        for i in self.co:
-            L.append(i)
-        for i in self.ep:
-            L.append(i)
-        for i in self.eo:
-            L.append(i)
-        return L
+        return self.cp + self.co + self.ep + self.eo
     
     def copy(self):
         return Cube(
@@ -82,7 +74,7 @@ class Cube:
         )
     
     def is_resolved(self):
-        return self.to_one_list() == cube_resolved.to_one_list()
+        return self.to_one_list() == _SOLVED
 
     def show(self):
         tab = [[-1 for _ in range(12)] for _ in range(9)]
@@ -318,3 +310,50 @@ class Cube:
 
 
 cube_resolved = Cube(cp, corner_orentation, ep, eo)
+_SOLVED = cube_resolved.to_one_list()
+
+# -------------------------
+# BATCHED (VECTORIZED) OPS - for training on many cubes at once
+# -------------------------
+_MOVE_TENSORS = {
+    name: (
+        tensor(m["cp"]),
+        tensor(m["co"]),
+        tensor(m["ep"]),
+        tensor(m["eo"]),
+    )
+    for name, m in Cube.MOVES.items()
+}
+_SOLVED_CP = tensor(cp)
+_SOLVED_EP = tensor(ep)
+
+
+_device_cache = {}
+
+
+def _on(device):
+    if device not in _device_cache:
+        _device_cache[device] = (
+            {name: tuple(t.to(device) for t in v) for name, v in _MOVE_TENSORS.items()},
+            _SOLVED_CP.to(device),
+            _SOLVED_EP.to(device),
+        )
+    return _device_cache[device]
+
+
+def move_batch(cp, co, ep, eo, move_name):
+    move_tensors, _, _ = _on(cp.device)
+    idx_cp, twist_co, idx_ep, twist_eo = move_tensors[move_name]
+    return cp[:, idx_cp], (co[:, idx_cp] + twist_co) % 3, ep[:, idx_ep], (eo[:, idx_ep] + twist_eo) % 2
+
+
+def is_resolved_batch(cp, co, ep, eo):
+    _, solved_cp, solved_ep = _on(cp.device)
+    return (cp == solved_cp).all(1) & (co == 0).all(1) & (ep == solved_ep).all(1) & (eo == 0).all(1)
+
+
+def to_vector_batch(cp, co, ep, eo):
+    cp_oh = torch.nn.functional.one_hot(cp, 8).transpose(1, 2).reshape(len(cp), 64)
+    co_oh = torch.nn.functional.one_hot(co, 3).transpose(1, 2).reshape(len(cp), 24)
+    ep_oh = torch.nn.functional.one_hot(ep, 12).transpose(1, 2).reshape(len(cp), 144)
+    return torch.cat([cp_oh, co_oh, ep_oh, eo], dim=1).float()
